@@ -87,6 +87,7 @@ public class Controller implements Initializable {
 
         Network.setCallOnMsgReceived(args -> {
             String msg = args[0].toString();
+            System.out.println(msg);
             if (msg.startsWith("/")) {
                 if (msg.startsWith("/clients ")) {
                     String[] tokens = msg.split("\\s");

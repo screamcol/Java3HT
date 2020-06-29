@@ -1,38 +1,27 @@
 package Lesson_2.server;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class SimpleAuthService implements AuthService {
-    private class UserData {
-        private String login;
-        private String password;
-        private String nickname;
+    DBHelper DBHelper;
 
-        public UserData(String login, String password, String nickname) {
-            this.login = login;
-            this.password = password;
-            this.nickname = nickname;
-        }
-    }
-
-    private List<UserData> users;
-
-    public SimpleAuthService() {
-        this.users = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
-            users.add(new UserData("login" + i, "pass" + i, "nick" + i));
+    public SimpleAuthService(DBHelper helper) {
+        DBHelper = helper;
+        DBHelper.init();
+        if (DBHelper.selectAll().size() == 0) {
+            for (int i = 1; i <= 10; i++) {
+                String password = DigestUtils.md5Hex("pass" + i);   // хэширование пароля md5
+                DBHelper.insert(i, "login" + i, password, "nick" + i);
+            }
         }
     }
 
     @Override
     public String getNicknameByLoginAndPassword(String login, String password) {
-        for (UserData o : users) {
-            if (o.login.equals(login) && o.password.equals(password)) {
-                return o.nickname;
-            }
-        }
-        return null;
+        String md5Password = DigestUtils.md5Hex(password); // получение пароля и хэширование в md5
+        String result = DBHelper.selectNickname(login, md5Password);
+        if (result != null) return result;
+        else return null;
     }
 }
 
