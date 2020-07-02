@@ -6,8 +6,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 
 public class Controller implements Initializable {
     @FXML
@@ -27,6 +31,7 @@ public class Controller implements Initializable {
 
     private boolean authenticated;
     private String nickname;
+    private Scanner scanner;
 
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
@@ -76,12 +81,26 @@ public class Controller implements Initializable {
     }
 
     public void linkCallbacks() {
+
         Network.setCallOnException(args -> showAlert(args[0].toString()));
 
         Network.setCallOnCloseConnection(args -> setAuthenticated(false));
 
         Network.setCallOnAuthenticated(args -> {
             setAuthenticated(true);
+            textArea.clear();
+            try {
+                scanner = new Scanner(new File("history.txt"));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            int countLine = 0;
+            while (scanner.hasNext()) {
+                textArea.appendText(scanner.nextLine() + "\n");
+                countLine++;
+                if (countLine == 100) return;
+            }
+
             nickname = args[0].toString();
         });
 

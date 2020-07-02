@@ -1,15 +1,16 @@
 package Lesson_3.client;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.sql.Connection;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class Network {
     private static Socket socket;
     private static DataInputStream in;
     private static DataOutputStream out;
+    private static PrintWriter printWriter;
 
     private static Callback callOnMsgReceived;
     private static Callback callOnAuthenticated;
@@ -67,11 +68,15 @@ public class Network {
                             }
                         }
                     }).start();
-
+                    printWriter = new PrintWriter(new FileOutputStream(new File("history.txt"), true));
                     while (true) {
                         String msg = in.readUTF();
                         if (msg.startsWith("/authok ")) {
                             callOnAuthenticated.callback(msg.split("\\s")[1]);
+                            File file = new File("history.txt");
+                            if (!file.exists()) {
+                                file.createNewFile();
+                            }
                             break;
                         }
                     }
@@ -81,10 +86,14 @@ public class Network {
                             break;
                         }
                         callOnMsgReceived.callback(msg);
+                        if (!msg.startsWith("/")) {
+                            printWriter.println(msg);
+                        }
                     }
                 } catch (IOException e) {
                     callOnException.callback("Соединение с сервером разорвано");
                 } finally {
+                    printWriter.close();
                     closeConnection();
                 }
             });
