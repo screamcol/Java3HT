@@ -7,6 +7,7 @@ import java.util.Vector;
 
 public class Server {
     private Vector<ClientHandler> clients;
+    DBHelper dbHelper;
     private AuthService authService;
 
     public AuthService getAuthService() {
@@ -15,7 +16,10 @@ public class Server {
 
     public Server() {
         clients = new Vector<>();
-        authService = new SimpleAuthService();
+//        authService = new SimpleAuthService();
+        dbHelper = new DBHelper();
+        dbHelper.connect();
+        authService = new SimpleAuthService(dbHelper);
         try (ServerSocket serverSocket = new ServerSocket(8189)) {
             System.out.println("Сервер запущен на порту 8189");
             while (true) {
@@ -25,6 +29,8 @@ public class Server {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            dbHelper.disconnect();
         }
         System.out.println("Сервер завершил свою работу");
     }
@@ -68,6 +74,11 @@ public class Server {
         }
         return false;
     }
+
+    public boolean nickExist(String nickname) {
+        return dbHelper.selectAllNicknames(nickname).size() > 0;
+    }
+
 
     public void broadcastClientsList() {
         StringBuilder sb = new StringBuilder(15 * clients.size());
