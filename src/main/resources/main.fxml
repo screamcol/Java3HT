@@ -13,7 +13,7 @@
 <?import javafx.scene.control.PasswordField?>
 
 <?import javafx.scene.control.ListView?>
-<VBox fx:controller="Lesson_2.client.Controller" xmlns:fx="http://javafx.com/fxml" alignment="center">
+<VBox fx:controller="Lesson_3.client.Controller" xmlns:fx="http://javafx.com/fxml" alignment="center">
     <HBox fx:id="authPanel">
         <TextField HBox.hgrow="ALWAYS" fx:id="loginField" promptText="Логин" />
         <PasswordField HBox.hgrow="ALWAYS" fx:id="passField" promptText="Пароль" onAction="#sendAuth" />
