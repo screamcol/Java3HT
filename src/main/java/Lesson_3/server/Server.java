@@ -16,7 +16,6 @@ public class Server {
 
     public Server() {
         clients = new Vector<>();
-//        authService = new SimpleAuthService();
         dbHelper = new DBHelper();
         dbHelper.connect();
         authService = new SimpleAuthService(dbHelper);

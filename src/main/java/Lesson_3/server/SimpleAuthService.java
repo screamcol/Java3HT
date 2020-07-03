@@ -1,25 +1,10 @@
 package Lesson_3.server;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SimpleAuthService implements AuthService {
     DBHelper DBHelper;
-//    private class UserData {
-//        private String login;
-//        private String password;
-//        private String nickname;
-//
-//        public UserData(String login, String password, String nickname) {
-//            this.login = login;
-//            this.password = password;
-//            this.nickname = nickname;
-//        }
-//    }
-//
-//    private List<UserData> users;
-//
+
     public SimpleAuthService(DBHelper helper) {
         DBHelper = helper;
         DBHelper.init();
