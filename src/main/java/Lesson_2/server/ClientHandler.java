@@ -28,7 +28,7 @@ public class ClientHandler {
 
             new Thread(() -> {
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(600000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -67,6 +67,18 @@ public class ClientHandler {
                             if(msg.startsWith("/w ")) {
                                 String[] tokens = msg.split("\\s", 3);
                                 server.privateMsg(this, tokens[1], tokens[2]);
+                            }
+                            if (msg.startsWith("/changeNick")) {
+                                String[] tokens = msg.split(" ");
+                                if (!server.nickExist(tokens[1])) {
+                                    server.dbHelper.updateNickname(nickname, tokens[1]);   // формат сообщения /changeNick [oldNick] [newNick]
+                                    server.broadcastMsg(nickname + " changed nickname on " + tokens[1]);
+                                    nickname = tokens[1];
+                                    server.unsubscribe(this);
+                                    server.subscribe(this);
+                                } else {
+                                    server.privateMsg(this, nickname, "nick is busy, try another one");
+                            }
                             }
                         } else {
                             server.broadcastMsg(nickname + ": " + msg);
