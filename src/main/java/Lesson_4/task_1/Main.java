@@ -18,7 +18,7 @@ public class Main {
                             positionA = num;
                             num++;
                             printer.printA();
-                            printer.notifyAll();
+                            printer.notify();
                             if (++count == 5) break;
                             printer.wait();
                         }
@@ -39,7 +39,7 @@ public class Main {
                             positionB = num;
                             num++;
                             printer.printB();
-                            printer.notifyAll();
+                            printer.notify();
                             if (++count == 5) break;
                             printer.wait();
                         }
@@ -60,7 +60,7 @@ public class Main {
                             positionC = num;
                             num++;
                             printer.printC();
-                            printer.notifyAll();
+                            printer.notify();
                             if (++count == 5) break;
                             printer.wait();
                         }
