@@ -1,5 +1,7 @@
 package Lesson_6.server;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,6 +11,7 @@ public class Server {
     private Vector<ClientHandler> clients;
     DBHelper dbHelper;
     private AuthService authService;
+    private static final Logger logger = Logger.getLogger(Server.class);
 
     public AuthService getAuthService() {
         return authService;
@@ -20,18 +23,22 @@ public class Server {
         dbHelper.connect();
         authService = new SimpleAuthService(dbHelper);
         try (ServerSocket serverSocket = new ServerSocket(8189)) {
-            System.out.println("Сервер запущен на порту 8189");
+//            System.out.println("Сервер запущен на порту 8189");
+            logger.debug("Сервер запущен на порту 8189");
             while (true) {
                 Socket socket = serverSocket.accept();
-                new ClientHandler(this, socket);
-                System.out.println("Подключился новый клиент");
+                logger.debug(new ClientHandler(this, socket));
+                logger.debug("Подключился новый клиент");
+//                System.out.println("Подключился новый клиент");
             }
         } catch (IOException e) {
+            logger.debug("Сервер сокет не создался");
             e.printStackTrace();
         } finally {
             dbHelper.disconnect();
         }
-        System.out.println("Сервер завершил свою работу");
+        logger.debug("Сервер завершил свою работу");
+//        System.out.println("Сервер завершил свою работу");
     }
 
     public void broadcastMsg(String msg) {
@@ -42,17 +49,20 @@ public class Server {
 
     public void privateMsg(ClientHandler sender, String receiverNick, String msg) {
         if (sender.getNickname().equals(receiverNick)) {
+            logger.debug("Клиент " + sender.getNickname() + "прислал сообщение для себя с текстом: " + msg);
             sender.sendMsg("заметка для себя: " + msg);
             return;
         }
         for (ClientHandler o : clients) {
             if (o.getNickname().equals(receiverNick)) {
+                logger.debug("Клиент " + sender.getNickname() + " прислал сообщение " + msg + " для " + receiverNick);
                 o.sendMsg("от " + sender.getNickname() + ": " + msg);
                 sender.sendMsg("для " + receiverNick + ": " + msg);
                 return;
             }
         }
         sender.sendMsg("Клиент " + receiverNick + " не найден");
+        logger.debug("Клиент " + sender.getNickname() + " не наден");
     }
 
     public void subscribe(ClientHandler clientHandler) {
