@@ -1,5 +1,7 @@
-package Lesson_6.server;
+package Lesson_6.homework.server;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sqlite.JDBC;
 
 import java.sql.*;
@@ -10,6 +12,7 @@ public class DBHelper {
 
     private Statement stmt;
     private Connection conn;
+    private static final Logger logger = LoggerFactory.getLogger(DBHelper.class);
 
 
     public void connect() {
@@ -18,6 +21,7 @@ public class DBHelper {
             conn = DriverManager.getConnection(JDBC.PREFIX + "DB.db");
             stmt = conn.createStatement();
         } catch (Exception e) {
+            logger.debug("Соединение с базой не установлено, ошибка: ", e);
             e.printStackTrace();
         }
     }
@@ -27,6 +31,7 @@ public class DBHelper {
             stmt.close();
             conn.close();
         } catch (Exception e) {
+            logger.debug("Не удалось разорвать соединение с БД, ошибка: ", e);
             e.printStackTrace();
         }
 
@@ -37,6 +42,7 @@ public class DBHelper {
         try {
             stmt.execute(insertQuery);
         } catch (SQLException e) {
+            logger.debug("Не удалось вставить в базу данных запись, ошибка: ", e);
             e.printStackTrace();
         }
     }
@@ -46,6 +52,7 @@ public class DBHelper {
         try {
             stmt.executeUpdate(createTable);
         } catch (SQLException e) {
+            logger.debug("Не удалось создать таблицу в БДб ошибка", e);
             e.printStackTrace();
         }
     }
@@ -55,6 +62,7 @@ public class DBHelper {
         try {
             stmt.execute(updateNick);
         } catch (SQLException e) {
+            logger.debug("Не удалось обновить базу данных, ошибка", e);
             e.printStackTrace();
         }
     }
@@ -67,6 +75,7 @@ public class DBHelper {
             rs = stmt.executeQuery(query);
             result = rs.getString("Nickname");
         } catch (SQLException e) {
+            logger.debug("Не удалось выбрать данные из БД, ошибка", e);
             e.printStackTrace();
         }
         return result;
@@ -82,6 +91,7 @@ public class DBHelper {
                 userName.add(username);
             }
         } catch (SQLException e) {
+            logger.debug("Не удалось выбрать все данные из БД, ошибка", e);
             e.printStackTrace();
         }
 
@@ -98,6 +108,7 @@ public class DBHelper {
                 usernames.add(username);
             }
         } catch (SQLException e) {
+            logger.debug("Не удалось выбрать всех пользователей под именем {} из БД, ошибка: ", nickname, e);
             e.printStackTrace();
         }
 

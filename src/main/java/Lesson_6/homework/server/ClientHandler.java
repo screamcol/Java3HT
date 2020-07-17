@@ -1,4 +1,7 @@
-package Lesson_6.server;
+package Lesson_6.homework.server;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -12,6 +15,7 @@ public class ClientHandler {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
+    private static final Logger logger = LoggerFactory.getLogger(ClientHandler.class);
 
 
     public String getNickname() {
@@ -30,11 +34,13 @@ public class ClientHandler {
                 try {
                     Thread.sleep(600000);
                 } catch (InterruptedException e) {
+                    logger.debug("Ошибка во время ожидания авторизации клиента: ", e);
                     e.printStackTrace();
                 }
 
                 if (!isAuth.get()){
                     System.out.println("Таймаут соединения. Клиент подключен больше 1 минуты и не авторизовался ");
+                    logger.debug("Клиент разорван по таймауту");
                     ClientHandler.this.disconnect();
                 }
 
@@ -49,6 +55,7 @@ public class ClientHandler {
                             String[] tokens = msg.split("\\s");
                             String nick = server.getAuthService().getNicknameByLoginAndPassword(tokens[1], tokens[2]);
                             if (nick != null && !server.isNickBusy(nick)) {
+                                logger.debug("Клиент под логином {} авторизовался", tokens[1]);
                                 sendMsg("/authok " + nick);
                                 isAuth.set(true);
                                 nickname = nick;
@@ -73,9 +80,11 @@ public class ClientHandler {
                                 if (!server.nickExist(tokens[1])) {
                                     server.dbHelper.updateNickname(nickname, tokens[1]);   // формат сообщения /changeNick [oldNick] [newNick]
                                     server.broadcastMsg(nickname + " changed nickname on " + tokens[1]);
+                                    String oldNickname = nickname;
                                     nickname = tokens[1];
                                     server.unsubscribe(this);
                                     server.subscribe(this);
+                                    logger.debug("Пользователь с ником {} сменил успешно ник на {}", oldNickname, nickname);
                                 } else {
                                     server.privateMsg(this, nickname, "nick is busy, try another one");
                                 }
@@ -85,6 +94,7 @@ public class ClientHandler {
                         }
                     }
                 } catch (IOException e) {
+                    logger.debug("Ошибка во время чтения данных: ", e);
                     e.printStackTrace();
                 } finally {
                     server.unsubscribe(this);
@@ -109,16 +119,19 @@ public class ClientHandler {
         try {
             in.close();
         } catch (IOException e) {
+            logger.debug("Не удалось закрыть входящий поток: ", e);
             e.printStackTrace();
         }
         try {
             out.close();
         } catch (IOException e) {
+            logger.debug("Не удалось закрыть исходящий поток: ", e);
             e.printStackTrace();
         }
         try {
             socket.close();
         } catch (IOException e) {
+            logger.debug("Не удалось закрыть соединение с сервером: ", e);
             e.printStackTrace();
         }
     }

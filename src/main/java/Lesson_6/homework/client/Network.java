@@ -1,4 +1,4 @@
-package Lesson_6.client;
+package Lesson_6.homework.client;
 
 import java.io.*;
 import java.net.Socket;

@@ -1,11 +1,11 @@
-package Lesson_6.server;
+package Lesson_6.homework.server;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class SimpleAuthService implements AuthService {
-    Lesson_6.server.DBHelper DBHelper;
+    Lesson_6.homework.server.DBHelper DBHelper;
 
-    public SimpleAuthService(Lesson_6.server.DBHelper helper) {
+    public SimpleAuthService(DBHelper helper) {
         DBHelper = helper;
         DBHelper.init();
         if (DBHelper.selectAll().size() == 0) {

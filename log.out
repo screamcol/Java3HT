@@ -1,1 +1,13 @@
-
+22:23:08 [DEBUG] <Lesson_6.homework.server.Server:<init>:28> - Сервер запущен на порту 8189
+22:23:17 [DEBUG] <Lesson_6.homework.server.Server:<init>:31> - Подключился новый клиент
+22:23:17 [DEBUG] <Lesson_6.homework.server.DBHelper:selectNickname:78> - Не удалось выбрать данные из БД, ошибка
+java.sql.SQLException: ResultSet closed
+	at org.sqlite.core.CoreResultSet.checkOpen(CoreResultSet.java:76)
+	at org.sqlite.jdbc3.JDBC3ResultSet.findColumn(JDBC3ResultSet.java:39)
+	at org.sqlite.jdbc3.JDBC3ResultSet.getString(JDBC3ResultSet.java:452)
+	at Lesson_6.homework.server.DBHelper.selectNickname(DBHelper.java:76)
+	at Lesson_6.homework.server.SimpleAuthService.getNicknameByLoginAndPassword(SimpleAuthService.java:22)
+	at Lesson_6.homework.server.ClientHandler.lambda$new$1(ClientHandler.java:56)
+	at java.base/java.lang.Thread.run(Thread.java:830)
+22:23:42 [DEBUG] <Lesson_6.homework.server.ClientHandler:lambda$new$1:58> - Клиент под логином login1 авторизовался
+22:23:42 [DEBUG] <Lesson_6.homework.server.Server:subscribe:70> - Клиент добавлен в подписку:
